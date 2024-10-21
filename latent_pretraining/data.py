@@ -690,7 +690,7 @@ class DeltaVisionActionProcessor(object):
                 action_mask.append(False)
             elif 'vision' in field:
                 if self.config.img_aug:
-                    example['image'] = example['image'].replace('data/','')
+                    example['image'] = example['image'][5:]
                     image_paths = [self.config.image_absolute_path + example['image'] ]
                     processed_images = process_images_batch(image_paths, self.preprocessor)
                     encoded_images = encode_images(self.vqgan, processed_images)

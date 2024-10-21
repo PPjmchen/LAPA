@@ -4,24 +4,24 @@ cd $PROJECT_DIR
 export PYTHONPATH="$PYTHONPATH:$PROJECT_DIR"
 export LIBTPU_INIT_ARGS="--xla_tpu_megacore_fusion_allow_ags=false --xla_enable_async_collective_permute=true --xla_tpu_enable_ag_backward_pipelining=true --xla_tpu_enable_data_parallel_all_reduce_opt=true --xla_tpu_data_parallel_opt_different_sized_ops=true --xla_tpu_enable_async_collective_fusion=true --xla_tpu_enable_async_collective_fusion_multiple_steps=true --xla_tpu_overlap_compute_collective_tc=true --xla_enable_async_all_gather=true"
 
-export absolute_path= # absolute path to the project directory
+export absolute_path="/root/data/Projects/LAPA"
 export llama_tokenizer_path="$absolute_path/lapa_checkpoints/tokenizer.model"
 export output_dir="$absolute_path/outputs"
 
 export project_id='lapa'
 export experiment_note='lapa_finetune'
 
-export dataset_path="$absolute_path/data/real_finetune.jsonl"
+export dataset_path="$absolute_path/data/openvla_beef_test.jsonl"
 export experiment_id='finetune_real'
 
 python3 -u -m latent_pretraining.train \
     --modality='vision,action,delta' \
-    --mesh_dim='!-1,4,1,1' \
+    --mesh_dim='!-1,8,1,1' \
     --dtype='bf16' \
     --total_steps=2000 \
     --log_freq=1 \
     --eval_steps=0 \
-    --save_model_freq=0 \
+    --save_model_freq=100 \
     --eval_log_freq=100 \
     --save_milestone_freq=2000 \
     --load_llama_config='7b' \
@@ -49,10 +49,10 @@ python3 -u -m latent_pretraining.train \
     --train_dataset.json_delta_action_dataset.mode="pad" \
     --train_dataset.json_delta_action_dataset.path="$dataset_path" \
     --train_dataset.json_delta_action_dataset.seq_length=384 \
-    --train_dataset.json_delta_action_dataset.batch_size=128 \
+    --train_dataset.json_delta_action_dataset.batch_size=64 \
     --train_dataset.json_delta_action_dataset.tokenizer_processes=1 \
-    --train_dataset.json_delta_action_dataset.tokenizer_parallel_chunk_size=128 \
-    --train_dataset.json_delta_action_dataset.tokenizer_parallel_batch_size=128 \
+    --train_dataset.json_delta_action_dataset.tokenizer_parallel_chunk_size=64 \
+    --train_dataset.json_delta_action_dataset.tokenizer_parallel_batch_size=64 \
     --train_dataset.json_delta_action_dataset.use_data_sharded_loader=True \
     --checkpointer.save_optimizer_state=False \
     --autoresume=False \
